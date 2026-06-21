@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: vectorshift-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    plan: free
+    envVars:
+      - key: FRONTEND_URL
+        value: https://vectorshift-frontend.onrender.com
+
+  - type: web
+    name: vectorshift-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: build
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://vectorshift-backend.onrender.com
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
